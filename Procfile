@@ -1,0 +1,1 @@
+worker: pip install pytz && python3 main.py
