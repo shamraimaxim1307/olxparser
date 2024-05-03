@@ -4,11 +4,36 @@ import time
 from pytz import timezone
 from datetime import datetime
 
+import asyncio
+from aiogram import Bot, Dispatcher
 
-def olxparser(newest_date):
-    page = requests.get(
-        'https://www.olx.ua/uk/elektronika/telefony-i-aksesuary/mobilnye-telefony-smartfony/q-iphone/?currency=UAH&search%5Bfilter_float_price%3Ato%5D=1500&search%5Border%5D=created_at%3Adesc',
-        timeout=None)
+API_TOKEN = '6965844134:AAHAetpAZe8_C9w_JmuhMyd2icXNYn8aDn0'
+
+# Initialize bot and dispatcher
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher(bot)
+
+
+async def start_bot():
+    ukraine_time = timezone("Europe/Kiev")
+    time_for_bot = datetime.now(ukraine_time).strftime("%H:%M")
+
+    print('Bot is working!')
+    await olxparser(time_for_bot)
+
+
+async def olxparser(newest_date):
+    search_words = 'iphone'
+    price = '1500'
+    # search%5Border%5D=created_at:desc - newer one
+    # search%5Border%5D=filter_float_price:asc - cheaper one
+    # search%5Border%5D=filter_float_price:desc - expensive one
+    # search%5Border%5D=relevance:desc - recommended
+    sort = 'search%5Border%5D=created_at:desc'
+
+    page = requests.get(f'https://www.olx.ua/uk/elektronika/telefony-i-aksesuary/mobilnye-telefony-smartfony/q-{search_words}/'
+                        f'?currency=UAH&search%5Bfilter_float_price%3Ato%5D={price}&{sort}',
+                        timeout=None)
 
     soup = bs4.BeautifulSoup(page.text, "html.parser")
     section = soup.find_all("div", class_="css-j0t2x2")
@@ -44,7 +69,8 @@ def olxparser(newest_date):
 
                 # Output the information
                 products_arr.append(
-                    f"Назва товару: {product_info_name}\nЦіна: {product_info_price}\nПосилання: https://www.olx.ua/{product_info_link}\nДата публікації: {product_info_date}\n")
+                    f"Назва товару: {product_info_name}\nЦіна: {product_info_price}\nПосилання:"
+                    f" https://www.olx.ua/{product_info_link}\nДата публікації: {product_info_date}\n")
 
     # Condition to show the newest goods
     if product_dates:
@@ -52,23 +78,17 @@ def olxparser(newest_date):
             newest_date = max(product_dates).strftime("%H:%M")
             for product in products_arr:
                 if newest_date in product:
-                    print(f"Знайдено новий товар:\n{product}")
+                    await bot.send_message(-1002008015106, f"Знайдено новий товар:\n{product}")
             time.sleep(60)
-            olxparser(newest_date)
+            await olxparser(newest_date)
         else:
+            print("2")
             time.sleep(60)
-            olxparser(newest_date)
+            await olxparser(newest_date)
     else:
         print(product_dates)
         print("Error")
 
 
-def main():
-    if __name__ == "__main__":
-        print("Бота запущено")
-        ukraine_time = timezone("Europe/Kiev")
-        time = datetime.now(ukraine_time).strftime("%H:%M")
-        olxparser(time)
-
-
-main()
+if __name__ == '__main__':
+    asyncio.run(start_bot())
