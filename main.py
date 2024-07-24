@@ -7,7 +7,7 @@ from datetime import datetime
 import asyncio
 from aiogram import Bot, Dispatcher
 
-API_TOKEN = 'API_TOKEN'
+API_TOKEN = SET_API_HERE
 
 # Initialize bot and dispatcher
 bot = Bot(token=API_TOKEN)
@@ -17,7 +17,6 @@ dp = Dispatcher(bot)
 async def start_bot():
     ukraine_time = timezone("Europe/Kiev")
     time_for_bot = datetime.now(ukraine_time).strftime("%H:%M")
-
     print('Bot is working!')
     await olxparser(time_for_bot)
 
@@ -78,7 +77,7 @@ async def olxparser(newest_date):
             newest_date = max(product_dates).strftime("%H:%M")
             for product in products_arr:
                 if newest_date in product:
-                    await bot.send_message(-1002008015106, f"Знайдено новий товар:\n{product}")
+                    await bot.send_message(SET_ID_HERE, text=f"Знайдено новий товар:\n{product}")
             time.sleep(60)
             await olxparser(newest_date)
         else:
