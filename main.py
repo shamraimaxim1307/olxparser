@@ -7,7 +7,7 @@ from datetime import datetime
 import asyncio
 from aiogram import Bot, Dispatcher
 
-API_TOKEN = '6965844134:AAHAetpAZe8_C9w_JmuhMyd2icXNYn8aDn0'
+API_TOKEN = 'API_TOKEN'
 
 # Initialize bot and dispatcher
 bot = Bot(token=API_TOKEN)
@@ -49,13 +49,13 @@ async def olxparser(newest_date):
 
             # Product name and price
             product_info_section = product_info_block.find("div", class_="css-u2ayx9")
-            product_info_name = product_info_section.find("h6", class_="css-16v5mdi er34gjf0").get_text(strip=True)
-            product_info_price = product_info_section.find("p", class_="css-tyui9s er34gjf0").get_text(strip=True)
+            product_info_name = product_info_section.find("h6", class_="css-1wxaaza").get_text(strip=True)
+            product_info_price = product_info_section.find("p", class_="css-13afqrm").get_text(strip=True)
             product_info_link = product_info_section.find("a", class_="css-z3gu2d").get("href")
 
             # Product date of publication
             product_info_date_section = product_info_block.find("div", class_="css-odp1qd")
-            product_info_date = product_info_date_section.find("p", class_="css-1a4brun er34gjf0").get_text().split()
+            product_info_date = product_info_date_section.find("p", class_="css-1mwdrlh").get_text().split()
 
             # Condition to avoid older ad goods
             if product_info_date[-1] == "р.":
@@ -82,7 +82,6 @@ async def olxparser(newest_date):
             time.sleep(60)
             await olxparser(newest_date)
         else:
-            print("2")
             time.sleep(60)
             await olxparser(newest_date)
     else:
