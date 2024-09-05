@@ -84,10 +84,8 @@ async def olxparser(newest_date):
             time.sleep(60)
             await olxparser(newest_date)
     else:
-        await bot.send_message('-1002008015106', text=f"Шалава від'єбнула\nproduct_dates log: {product_dates}\n"
-                                                      f"Перезапуск")
-        time.sleep(60)
-        await olxparser(newest_date)
+        print(product_dates)
+        print("Error")
 
 
 if __name__ == '__main__':
